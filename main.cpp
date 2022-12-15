@@ -1,6 +1,8 @@
 #include <iostream>
 #include <string>
 #include <fstream>
+#include <stdlib.h>
+
 using namespace std;
 
 class Graph
@@ -523,6 +525,51 @@ public:
         delete[] previous;
         delete[] visited;
         delete[] path;
+    }
+
+    void findHighlyConnectedComponents() {
+        //find all strongly connected components using BFS and print them to the standard output
+
+        bool *visited = new bool[numberOfNodes];
+        for (int i = 0; i < numberOfNodes; i++)
+        {
+            visited[i] = false;
+        }
+
+        for (int i = 0; i < numberOfNodes; i++)
+        {
+            if (!visited[i])
+            {
+                int *queue = new int[numberOfNodes];
+                int queueLength = 0;
+                queue[queueLength] = i;
+                queueLength++;
+                visited[i] = true;
+                while (queueLength > 0)
+                {
+                    int currentNode = queue[0];
+                    for (int j = 0; j < queueLength - 1; j++)
+                    {
+                        queue[j] = queue[j + 1];
+                    }
+                    queueLength--;
+                    for (int j = 0; j < numberOfNodes; j++)
+                    {
+                        if (matrix[currentNode][j] != -1 && !visited[j])
+                        {
+                            queue[queueLength] = j;
+                            queueLength++;
+                            visited[j] = true;
+                        }
+                    }
+                }
+                delete[] queue;
+            }
+        }
+
+        delete[] visited;
+
+
     }
 };
 
