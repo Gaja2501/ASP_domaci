@@ -421,7 +421,108 @@ public:
     }
 
     void findClosestPath(string begin, string end) {
+        int startNode = -1;
+        for (int i = 0; i < numberOfNodes; i++)
+        {
+            if (nodesNames[i] == begin)
+            {
+                startNode = i;
+                break;
+            }
+        }
+        if (startNode == -1)
+        {
+            cout << "Node not found" << endl;
+            return;
+        }
+        int endNode = -1;
+        for (int i = 0; i < numberOfNodes; i++)
+        {
+            if (nodesNames[i] == end)
+            {
+                endNode = i;
+                break;
+            }
+        }
+        if (endNode == -1)
+        {
+            cout << "Node not found" << endl;
+            return;
+        }
+        //implement djikstra algorithm to find the shortest path from startNode to endNode
 
+        double *distances = new double[numberOfNodes];
+        int *previous = new int[numberOfNodes];
+        bool *visited = new bool[numberOfNodes];
+
+        for (int i = 0; i < numberOfNodes; i++)
+        {
+            distances[i] = -1;
+            previous[i] = -1;
+            visited[i] = false;
+        }
+
+        distances[startNode] = 1;
+
+        for (int i = 0; i < numberOfNodes; i++)
+        {
+            int maxIndex = -1;
+            double maxDistance = -1;
+            for (int j = 0; j < numberOfNodes; j++)
+            {
+                if (distances[j] > maxDistance && !visited[j])
+                {
+                    maxDistance = distances[j];
+                    maxIndex = j;
+                }
+            }
+            if (maxIndex == -1)
+            {
+                break;
+            }
+            visited[maxIndex] = true;
+            for (int j = 0; j < numberOfNodes; j++)
+            {
+                if (matrix[maxIndex][j] != -1 && !visited[j])
+                {
+                    if (distances[j] < distances[maxIndex] * matrix[maxIndex][j])
+                    {
+                        distances[j] = distances[maxIndex] * matrix[maxIndex][j];
+                        previous[j] = maxIndex;
+                    }
+                }
+            }
+        }
+
+        if (distances[endNode] == -1)
+        {
+            cout << "No path found" << endl;
+            return;
+        }
+
+        int *path = new int[numberOfNodes];
+        int pathLength = 0;
+        int currentNode = endNode;
+        while (currentNode != -1)
+        {
+            path[pathLength] = currentNode;
+            pathLength++;
+            currentNode = previous[currentNode];
+        }
+
+        for (int i = pathLength - 2; i >= 0; i--)
+        {
+            cout << nodesNames[path[i]] << "-(" << distances[path[i]] << ")->";
+        }
+
+        cout << nodesNames[path[pathLength - 1]];
+
+        cout << endl;
+        
+        delete[] distances;
+        delete[] previous;
+        delete[] visited;
+        delete[] path;
     }
 };
 
@@ -441,11 +542,13 @@ int main()
 
     // graph.deleteEdge("artikl", "proizvod");
 
-    // graph.printNodes();
+    graph.printNodes();
 
     graph.printMatrix();
 
     // graph.findSimilar("proizvod", 5);
+
+    graph.findClosestPath("ucenje", "udzbenik");
 
     return 0;
 }
